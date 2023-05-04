@@ -1,0 +1,14 @@
+update
+    cbf_migration_control   cntl,
+    (
+        select
+            (1000 - sum(ifnull(included_in_sample_migration_184, 0)))
+            / sum(ifnull(included_in_migration_183, 0))
+        from
+            civicrm_value_hubspot_migra_41
+        where
+                ifnull(excluded_from_migration_182, 0)  <>  1
+            and ifnull(included_in_migration_183, 0)    =   1
+    )   as  m(threshold)
+set
+    cntl.threshold = m.threshold

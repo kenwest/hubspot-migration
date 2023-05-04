@@ -1,0 +1,29 @@
+insert into
+civicrm_value_hubspot_migra_41 (
+    entity_id,
+    excluded_from_migration_182, included_in_migration_183, marketing_contact_188,
+    included_in_sample_migration_184, migrated_with_no_primary_email_185,
+    reason_excluded_186, reason_included_187, reason_marketing_189)
+select * from (
+    select
+        c.contact_id, null, null, 1, null, null, '', '', concat('Spent money after ', cntl.cutoff)
+    from
+                civicrm_contribution        c
+        join    civicrm_option_value        v       on  v.value = c.contribution_status_id
+        join    civicrm_financial_type      ft      on  ft.id = c.financial_type_id
+        join    cbf_migration_control       cntl
+    where
+                v.option_group_id       =       11              /* Contribution Status ... */
+        and     v.label                 in      ('Completed')   /* ... is Completed */
+        and     ft.name                 not in  ('Event Fee')   /* Event registration is captured elsewhere */
+        and     c.is_test               <>      1               /* Exclude test transactions ... */
+        and     c.total_amount          <>      0               /* ... and zero-valued contributions */
+        and     c.receive_date          >=      cntl.cutoff
+    group by
+        c.contact_id
+) as    newrow(id, excluded, included, marketing, sample, no_primary, reason_excluded, reason_included, reason_marketing)
+on duplicate key
+update
+    marketing_contact_188 = marketing,
+    reason_marketing_189 = if(reason_marketing_189 > '', left(concat(reason_marketing, '; ', reason_marketing_189), 1024), reason_marketing)
+    /* Note that if(null-expression, A, B) evaluates to B */

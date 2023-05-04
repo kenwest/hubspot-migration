@@ -1,0 +1,32 @@
+insert into
+civicrm_value_hubspot_migra_41 (
+    entity_id,
+    excluded_from_migration_182, included_in_migration_183, marketing_contact_188,
+    included_in_sample_migration_184, migrated_with_no_primary_email_185,
+    reason_excluded_186, reason_included_187, reason_marketing_189)
+select * from (
+    select
+        ac.contact_id, null, 1, null, null, null, '', concat('''', min(type.name), ''' activity after ', cntl.cutoff), ''
+    from
+                civicrm_activity                a
+        join    civicrm_activity_contact        ac      on  ac.activity_id = a.id
+        join    cbf_migration_control           cntl 
+        join    (
+                    values
+                    row (10, 'Communication Card'),
+                    row (47, 'Reminder Sent'),
+                    row (86, 'Contact form submission'),
+                    row (88, 'Feedback form submission')
+                ) as    type(id, name)                  on  a.activity_type_id = type.id
+    where
+                a.activity_date_time    >=      cntl.cutoff /* Activity after cutoff date */
+        and     ac.record_type_id       =       3           /* Activity Assignees = 1, Activity Source = 2, Activity Targets = 3 */
+        and     a.status_id             =       2           /* Completed */
+    group by
+        ac.contact_id
+) as    newrow(id, excluded, included, marketing, sample, no_primary, reason_excluded, reason_included, reason_marketing)
+on duplicate key
+update
+    included_in_migration_183 = included,
+    reason_included_187 = if(reason_included_187 > '', left(concat(reason_included, '; ', reason_included_187), 1024), reason_included)
+    /* Note that if(null-expression, A, B) evaluates to B */

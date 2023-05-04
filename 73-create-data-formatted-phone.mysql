@@ -1,0 +1,67 @@
+/*
+ *  The weight for a phone is calculated as follows ...
+ *
+ *      Weight = p,iii,iii  using the components below ...
+ *
+ *               1,000,000  if this is the primary phone
+ *                 999,999  the phone's id (currently between 1 and ~70,000)
+ *                          to give weight to more recent phones
+ */
+insert into
+civicrm_value_hubspot_migra_42 (entity_id, entity_type_200, entity_id_194, entity_value_195, entity_weight_196, entity_slot_198)
+select * from (
+    select
+        phone.contact,
+        'phone',
+        max(phone.id),
+        phone.value,
+        if(max(phone.is_primary), 1000000, 0) + max(phone.id),
+        null
+    from
+            (
+                select
+                    p.contact_id,
+                    p.id,
+                    concat_ws(' ',
+                        lpad((p.phone_numeric div 10000) mod 10000, 4, '0'),
+                        lpad(p.phone_numeric mod 10000, 4, '0')),
+                    p.is_primary,
+                    p.phone_type_id
+                from civicrm_phone p
+                where
+                        p.phone_numeric between 10000000 and 99999999
+                union
+                select
+                    p.contact_id,
+                    p.id,
+                    concat_ws(' ',
+                        lpad((p.phone_numeric div 100000000) mod 10, 2, '0'),
+                        lpad((p.phone_numeric div 10000) mod 10000, 4, '0'),
+                        lpad(p.phone_numeric mod 10000, 4, '0')),
+                    p.is_primary,
+                    p.phone_type_id
+                from civicrm_phone p
+                where
+                        p.phone_numeric between 200000000 and 399999999
+                    or  p.phone_numeric between 500000000 and 999999999
+                    or  p.phone_numeric between 61200000000 and 61399999999
+                    or  p.phone_numeric between 61500000000 and 61999999999
+            ) as
+                phone(contact, id, value, is_primary, type)
+        join    civicrm_value_hubspot_migra_41  m   on  phone.contact = m.entity_id
+        join    civicrm_option_value            t   on  phone.type = t.value
+    where
+            m.included_in_migration_183 =   1
+        and t.option_group_id           =   74      /* Phone type */
+        and t.label                     <>  'Fax'   /* Faxes are not being migrated */
+    group by
+        phone.contact, phone.value
+) as    newrow(contact, e_type, e_id, e_value, e_weight, e_slot)
+on duplicate key
+update
+    entity_id           =   contact,
+    entity_type_200     =   e_type,
+    entity_id_194       =   e_id,
+    entity_value_195    =   e_value,
+    entity_weight_196   =   e_weight,
+    entity_slot_198     =   e_slot

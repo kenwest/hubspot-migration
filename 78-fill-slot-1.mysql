@@ -1,0 +1,25 @@
+insert into
+civicrm_value_hubspot_migra_42 (id, entity_id, entity_slot_198)
+select * from (
+    select
+        m.id, m.entity_id, slot.number
+    from
+    (
+        select ifnull(max(entity_slot_198), 0) + 1 from civicrm_value_hubspot_migra_42
+    ) as slot(number)
+    join
+    (
+        select entity_id, entity_type_200, max(entity_weight_196)
+        from civicrm_value_hubspot_migra_42
+        where entity_slot_198 is null
+        group by entity_id, entity_type_200
+    ) as heaviest(contact, name, weight)
+    join
+        civicrm_value_hubspot_migra_42 m
+            on  m.entity_id = heaviest.contact
+            and m.entity_type_200 = heaviest.name
+            and m.entity_weight_196 = heaviest.weight
+) as    newrow(id, contact, slot)
+on duplicate key
+update
+    entity_slot_198     =   slot

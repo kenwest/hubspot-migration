@@ -1,0 +1,11 @@
+update
+    civicrm_value_hubspot_migra_41
+set
+    included_in_migration_183   =   0,
+    marketing_contact_188       =   0
+where
+        (
+                included_in_migration_183   =   1
+            or  marketing_contact_188       =   1
+        )
+    and excluded_from_migration_182         =   1

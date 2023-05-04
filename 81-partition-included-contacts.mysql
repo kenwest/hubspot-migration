@@ -1,7 +1,0 @@
-update
-    civicrm_value_hubspot_migra_41
-set
-    quartile_191                =   floor( 4 * rand() ),
-    decile_192                  =   floor( 10 * rand() )
-where
-    included_in_migration_183   =   1

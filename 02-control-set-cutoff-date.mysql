@@ -1,6 +1,0 @@
-insert into cbf_migration_control(cutoff, threshold)
-(
-    select
-        concat(year(now())-7, '-01-01'),
-        0
-)

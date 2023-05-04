@@ -1,9 +1,0 @@
-update
-    civicrm_value_hubspot_migra_41  m,
-    cbf_migration_control           cntl
-set
-    m.included_in_sample_migration_184 = 1
-where
-        ifnull(m.included_in_migration_183, 0) = 1
-    and ifnull(m.included_in_sample_migration_184, 0) <> 1
-    and rand() < cntl.threshold

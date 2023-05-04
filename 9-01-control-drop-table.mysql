@@ -1,1 +1,1 @@
-drop table if exists cbf_migration_control
+drop table cbf_migration_control

@@ -8,7 +8,7 @@ select * from (
     select
         c.id, 1, null, null, null, null, concat('Contact type is ', c.contact_type), '', ''
     from
-                civicrm_contact        c
+                cbf_migration_contact  c
     where
                 c.contact_type         <>  'Individual'
 ) as    newrow(id, excluded, included, marketing, sample, no_primary, reason_excluded, reason_included, reason_marketing)

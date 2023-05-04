@@ -12,7 +12,7 @@ select * from (
                 civicrm_value_hubspot_migra_43  n
         join    civicrm_group                   g    on  g.id = n.entity_id
         join    civicrm_group_contact           gc   on  gc.group_id = g.id
-        join    civicrm_contact                 c    on  c.id = gc.contact_id
+        join    cbf_migration_contact           c    on  c.id = gc.contact_id
     where
             n.is_network_201    =   1
         and gc.status           =   'Added'

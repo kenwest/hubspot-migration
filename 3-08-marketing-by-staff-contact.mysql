@@ -10,7 +10,7 @@ select * from (
         concat('Staff contact fields include ', group_concat(s.display_name separator ', '))
     from
                 civicrm_value_1_classification_1    c
-        join    civicrm_contact                     s
+        join    cbf_migration_contact               s
     where
             s.id = c.staff_contact_61
         or  s.id = c.fundraising_contact_179

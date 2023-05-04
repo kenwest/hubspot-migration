@@ -8,7 +8,7 @@ select * from (
     select
         c.id, null, null, null, null, 0, '', 'Staff have primary email', ''
     from
-                civicrm_contact                 c
+                cbf_migration_contact           c
         join    civicrm_value_hubspot_migra_41  h   on  h.entity_id = c.id
     where
             c.contact_sub_type                      like    '%Staff%'

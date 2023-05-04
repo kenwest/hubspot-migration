@@ -8,7 +8,7 @@ select * from (
     select
         c.id, null, null, 1, null, null, '', '', 'Is staff'
     from
-                civicrm_contact        c
+                cbf_migration_contact  c
     where
                 c.contact_sub_type     like    '%Staff%'
 ) as    newrow(id, excluded, included, marketing, sample, no_primary, reason_excluded, reason_included, reason_marketing)

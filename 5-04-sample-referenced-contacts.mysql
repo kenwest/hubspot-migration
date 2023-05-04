@@ -10,7 +10,7 @@ select * from (
     from
                 civicrm_value_hubspot_migra_41      m
         join    civicrm_value_1_classification_1    c   on  c.entity_id = m.entity_id
-        join    civicrm_contact                     r
+        join    cbf_migration_contact               r
     where
         m.included_in_sample_migration_184=1
         and (

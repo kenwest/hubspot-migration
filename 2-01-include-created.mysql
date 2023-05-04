@@ -8,7 +8,7 @@ select * from (
     select
         c.id, null, 1, null, null, null, '', concat('Created after ', cntl.cutoff), ''
     from
-                civicrm_contact             c
+                cbf_migration_contact       c
         join    cbf_migration_control       cntl
     where
                 c.created_date              >=  cntl.cutoff     /* Created after cutoff date */

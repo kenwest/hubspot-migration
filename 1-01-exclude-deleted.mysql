@@ -8,7 +8,7 @@ select * from (
     select
         c.id, 1, null, null, null, null, 'Deleted contact', '', ''
     from
-                civicrm_contact        c
+                cbf_migration_contact  c
     where
                 c.is_deleted           =   1
 ) as    newrow(id, excluded, included, marketing, sample, no_primary, reason_excluded, reason_included, reason_marketing)

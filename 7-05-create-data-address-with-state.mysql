@@ -1,0 +1,44 @@
+/*
+ *  The weight for an address is calculated as follows ...
+ *
+ *      Weight = p,iii,iii  using the components below ...
+ *
+ *               1,000,000  if this is the primary address
+ *                 999,999  the address' id (currently between 1 and ~60,000)
+ *                          to give weight to more recent addresses
+ */
+insert into
+civicrm_value_hubspot_migra_42 (entity_id, entity_type_200, entity_id_194, entity_value_195, entity_weight_196, entity_slot_198)
+select * from (
+    select
+        a.contact_id,
+        'address',
+        max(a.id),
+        concat_ws(', ',
+            trim(max(a.supplemental_address_1)),
+            trim(a.street_address),
+            concat_ws(' ', trim(a.city), trim(s.abbreviation), trim(a.postal_code))
+        ),
+        if(max(a.is_primary), 1000000, 0) + max(a.id),
+        null
+    from
+               civicrm_address                 a
+        join   civicrm_value_hubspot_migra_41  m   on  a.contact_id = m.entity_id
+        join   civicrm_state_province          s   on  s.id = a.state_province_id
+    where
+            m.included_in_migration_183 =       1
+        and a.street_address            is not  null
+        and a.city                      is not  null
+        and a.postal_code               is not  null
+        and a.state_province_id         is not  null
+    group by
+        a.contact_id, a.street_address, a.city, a.postal_code, a.state_province_id
+) as    newrow(contact, e_type, e_id, e_value, e_weight, e_slot)
+on duplicate key
+update
+    entity_id           =   contact,
+    entity_type_200     =   e_type,
+    entity_id_194       =   e_id,
+    entity_value_195    =   e_value,
+    entity_weight_196   =   e_weight,
+    entity_slot_198     =   e_slot

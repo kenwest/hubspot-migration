@@ -1,0 +1,5 @@
+update
+    civicrm_value_hubspot_migra_43
+set
+    is_network_201      = null,
+    network_name_202    = null

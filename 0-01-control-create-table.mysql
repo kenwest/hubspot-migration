@@ -1,0 +1,1 @@
+create table cbf_migration_control (cutoff varchar(50), threshold float)

@@ -1,0 +1,135 @@
+create or replace view
+    cbf_migrate_contact
+as
+    select
+        /* Export control */
+        m.entity_id                             as  civicrm_contact_id,
+        now()                                   as  time_of_migration,
+        c.modified_date                         as  contact_last_modified_at,
+        m.marketing_contact_188                 as  is_marketing_contact,
+        m.included_in_sample_migration_184      as  is_in_sample,
+        /* Data fields */
+        c.first_name                            as  first_name,
+        c.last_name                             as  last_name,
+        mobile.value                            as  mobile,
+        phone.value                             as  phone,
+        other_phones.value                      as  other_phones,
+        e1.email                                as  primary_email,
+        e2.email                                as  secondary_email,
+        c.addressee_custom                      as  addressee,
+        address.supplementary                   as  address_supplementary,
+        address.street                          as  address_street,
+        address.city                            as  address_city,
+        address.postal_code                     as  address_postal_code,
+        address.state                           as  address_state,
+        address.country                         as  address_country,
+        other_locations.value                   as  other_locations,
+        'To be done'                            as  region,
+        c.birth_date                            as  birth_date,
+        class.year_started_work_35              as  year_entered_workforce,
+        c.job_title                             as  job_title,
+        gender.value                            as  gender,
+        class.church                            as  church,
+        employer.name                           as  employer,
+        fund.fundraising_points_84              as  fundraising_points,
+        dash.is_christian_72                    as  is_christian,
+        c.is_deceased                           as  is_deceased,
+        c.deceased_date                         as  deceased_date,
+        c.do_not_phone                          as  civicrm_do_not_phone,
+        c.do_not_email                          as  civicrm_do_not_email,
+        c.do_not_mail                           as  civicrm_do_not_mail,
+        c.do_not_sms                            as  civicrm_do_not_sms,
+        if(pref.sms, 'SMS',
+            if(pref.phone, 'Phone',
+            if(pref.postal_mail, 'Postal Mail',
+            if(pref.email, 'Email',
+            null))))                            as  preferred_communication,
+        dash.is_a_disciple_maker_70 = 'C'       as  is_bible_reader,
+        dash.disciple_maker_reading_69          as  bible_reader_count,
+        dash.last_significant_activity_97       as  civicrm_last_significant_activity,
+        'To be done'                            as  number_of_events,
+        'To be done'                            as  number_of_trainings,
+        class.relationships_team_contact_180    as  contact_owner,
+        class.staff_contact_61                  as  staff_buddy,
+        class.fundraising_contact_179           as  donor_manager,
+        'To be done'                            as  number_of_donations,
+        null                                    as  involvement_lead_score,
+        null                                    as  depth_lead_score,
+        null                                    as  competence,
+        null                                    as  confidence
+    from
+                    civicrm_value_hubspot_migra_41      m
+        join        civicrm_contact                     c       on  c.id = m.entity_id
+        join    (
+                select      id,
+                            locate('1', preferred_communication_method) > 0,
+                            locate('2', preferred_communication_method) > 0,
+                            locate('3', preferred_communication_method) > 0,
+                            locate('4', preferred_communication_method) > 0
+                from        civicrm_contact
+            ) as    pref(id, phone, email, postal_mail, sms)
+                                                        on pref.id = c.id
+        left join   civicrm_value_1_classification_1    class   on  class.entity_id = c.id
+        left join   civicrm_value_contact_dashboard_18  dash    on  dash.entity_id = c.id
+        left join   civicrm_value_fundraising_21        fund    on  fund.entity_id = c.id
+        left join   (
+                select      entity_id, entity_value_195
+                from        civicrm_value_hubspot_migra_42
+                where       entity_type_200 = 'mobile' and entity_slot_198 = 1
+            ) as    mobile(id, value)                   on mobile.id = c.id
+        left join   (
+                select      entity_id, entity_value_195
+                from        civicrm_value_hubspot_migra_42
+                where       entity_type_200 = 'phone' and entity_slot_198 = 1
+            ) as    phone(id, value)                    on phone.id = c.id
+        left join   (
+                select      d.entity_id, group_concat(concat_ws(' ', d.entity_value_195, loc.suffix) separator ', ')
+                from        civicrm_value_hubspot_migra_42 d
+                            join civicrm_phone p on p.id = d.entity_id_194
+                            left join (values row(1, '(Home)'), row(2, '(Work)')) as loc(id, suffix) on loc.id = p.location_type_id
+                where       d.entity_type_200 in ('mobile', 'phone') and ifnull(d.entity_slot_198, 0) <> 1
+                group by    d.entity_id
+                order by    d.entity_id, d.entity_weight_196 desc
+            ) as    other_phones(id, value)             on other_phones.id = c.id
+        left join   (
+                select      entity_id, entity_value_195
+                from        civicrm_value_hubspot_migra_42
+                where       entity_type_200 = 'email' and entity_slot_198 = 1
+            ) as    e1(id, email)                       on e1.id = c.id
+        left join   (
+                select      entity_id, group_concat(entity_value_195 separator ';')
+                from        civicrm_value_hubspot_migra_42
+                where       entity_type_200 = 'email' and ifnull(entity_slot_198, 0) <> 1
+                group by    entity_id
+                order by    entity_id, entity_weight_196 desc
+            ) as    e2(id, email)                       on e2.id = c.id
+        left join   (
+                select      d.entity_id, a.supplemental_address_1, a.street_address, a.city, a.postal_code, s.abbreviation, c.name
+                from        civicrm_value_hubspot_migra_42 d
+                            join civicrm_address a on a.id = d.entity_id_194
+                            join civicrm_state_province s on s.id = a.state_province_id
+                            join civicrm_country c on c.id = a.country_id
+                where       d.entity_type_200 = 'address' and d.entity_slot_198 = 1
+            ) as    address(id, supplementary, street, city, postal_code, state, country)
+                                                        on address.id = c.id
+        left join   (
+                select      d.entity_id, group_concat(concat_ws(' ', d.entity_value_195, loc.suffix) separator '\n')
+                from        civicrm_value_hubspot_migra_42 d
+                            join civicrm_address a on a.id = d.entity_id_194
+                            left join (values row(1, '(Home)'), row(2, '(Work)')) as loc(id, suffix) on loc.id = a.location_type_id
+                where       (d.entity_type_200 = 'address' and ifnull(d.entity_slot_198, 0) <> 1)
+                            or (d.entity_type_200 = 'location')
+                group by    d.entity_id
+                order by    d.entity_id, d.entity_weight_196 desc
+            ) as    other_locations(id, value)          on other_locations.id = c.id
+        left join   (
+                select      c.id, g.label
+                from        civicrm_contact c join civicrm_option_value g on g.value = c.gender_id
+                where       g.option_group_id = 3 /* Gender */
+            ) as    gender(id, value)                   on gender.id = c.id
+        left join   (
+                select      c.id, e.display_name
+                from        civicrm_contact c join civicrm_contact e on e.id = c.employer_id
+            ) as    employer(id, name)                  on employer.id = c.id
+    where
+            m.included_in_migration_183 = 1

@@ -1,0 +1,53 @@
+create or replace view
+    cbf_migrate_company_contact
+as
+    select
+        /* Export control */
+        contact.id                          as  civicrm_contact_id,
+        now()                               as  time_of_migration,
+        contact.modified_date               as  contact_last_modified_at,
+        m.included_in_sample_migration_184  as  is_in_sample,
+        contact.display_name                as  contact_name,
+        /* Data fields */
+        network.network_name_202            as  company,
+        null                                as  association_label
+    from
+                civicrm_value_hubspot_migra_43  network
+        join    civicrm_group                   g        on  g.id = network.entity_id
+        join    civicrm_group_contact           gc       on  gc.group_id = g.id
+        join    civicrm_contact                 contact  on  contact.id = gc.contact_id
+        join    civicrm_value_hubspot_migra_41  m        on  m.entity_id = contact.id
+    where
+            network.is_network_201      =   1
+        and gc.status                   =   'Added'
+        and contact.contact_type        =   'Individual'
+        and m.included_in_migration_183 =   1
+
+    union
+
+    select
+        contact.id,
+        now(),
+        contact.modified_date,
+        m.included_in_sample_migration_184,
+        contact.display_name,
+        grp.household_name,
+        if(s.is_leader_39 = 1, 'Group Leader', null)
+    from
+                civicrm_value_hubspot_migra_43  network
+        join    civicrm_group                   g        on  g.id = network.entity_id
+        join    civicrm_group_contact           gc       on  gc.group_id = g.id
+        join    civicrm_contact                 grp      on  grp.id = gc.contact_id
+        join    civicrm_relationship            r        on  r.contact_id_b = grp.id
+        join    civicrm_value_1_strategy_4      s        on  s.entity_id = r.id
+        join    civicrm_relationship_type       rt       on  r.relationship_type_id = rt.id
+        join    civicrm_contact                 contact  on  contact.id = r.contact_id_a
+        join    civicrm_value_hubspot_migra_41  m        on  m.entity_id = contact.id
+    where
+            network.is_network_201      =   1
+        and gc.status                   =   'Added'
+        and grp.contact_type            =   'Household'
+        and r.is_active                 =   1
+        and ifnull(r.end_date, now())   >=  now()
+        and rt.label_a_b                in  ('Team Member of')
+        and m.included_in_migration_183 =   1

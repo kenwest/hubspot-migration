@@ -1,0 +1,2 @@
+# hubspot-migration
+MySQL scripts 

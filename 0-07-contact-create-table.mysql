@@ -1,0 +1,18 @@
+create table cbf_migration_contact (
+    id                  int             primary key,
+    contact_type        varchar(64),
+    contact_sub_type    varchar(255),
+    do_not_email        tinyint,
+    display_name        varchar(128),
+    last_name           varchar(64),
+    is_deceased         tinyint,
+    is_deleted          tinyint,
+    created_date        timestamp,
+    index(contact_type),
+    index(contact_sub_type),
+    index(do_not_email),
+    index(last_name),
+    index(is_deceased),
+    index(is_deleted),
+    index(created_date)
+)

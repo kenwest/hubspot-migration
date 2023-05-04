@@ -1,0 +1,14 @@
+insert into
+cbf_migration_contact
+select
+    id,
+    contact_type,
+    contact_sub_type,
+    do_not_email,
+    display_name,
+    last_name,
+    is_deceased,
+    is_deleted,
+    created_date
+from
+    civicrm_contact

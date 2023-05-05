@@ -7,7 +7,7 @@ as
         contact.display_name                    as  contact_name,
         at.label                                as  civicrm_activity_type,
         now()                                   as  time_of_migration,
-        a.activity_date_time                    as  email_last_modified_at,
+        a.activity_date_time                    as  call_last_modified_at,
         m.marketing_contact_188                 as  is_marketing_contact,
         m.included_in_sample_migration_184      as  is_in_sample,
         /* Data fields */

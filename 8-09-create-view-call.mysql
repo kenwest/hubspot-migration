@@ -23,7 +23,7 @@ as
         'COMPLETED'                             as  call_status,
         a.subject                               as  call_title,
         owner.email                             as  owner_id,
-        'To be confirmed'                       as  activity_type
+        null                                    as  activity_type       /* @TODO */
     from
                     civicrm_value_hubspot_migra_41  m
         join        civicrm_contact                 contact on  contact.id = m.entity_id

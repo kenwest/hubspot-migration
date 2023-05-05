@@ -24,7 +24,7 @@ as
         address.state                           as  address_state,
         address.country                         as  address_country,
         other_locations.value                   as  other_locations,
-        'To be done'                            as  region,
+        null                                    as  region,                 /* @TODO */
         unix_timestamp(c.birth_date)            as  birth_date,
         class.year_started_work_35              as  year_entered_workforce,
         c.job_title                             as  job_title,
@@ -47,12 +47,12 @@ as
         dash.is_a_disciple_maker_70 = 'C'       as  is_bible_reader,
         dash.disciple_maker_reading_69          as  bible_reader_count,
         dash.last_significant_activity_97       as  civicrm_last_significant_activity,
-        'To be done'                            as  number_of_events,
-        'To be done'                            as  number_of_trainings,
+        null                                    as  number_of_events,       /* @TODO */
+        null                                    as  number_of_trainings,    /* @TODO */
         class.relationships_team_contact_180    as  contact_owner,
         class.staff_contact_61                  as  staff_buddy,
         class.fundraising_contact_179           as  donor_manager,
-        'To be done'                            as  number_of_donations,
+        null                                    as  number_of_donations,    /* @TODO */
         null                                    as  involvement_lead_score,
         null                                    as  depth_lead_score,
         null                                    as  competence,

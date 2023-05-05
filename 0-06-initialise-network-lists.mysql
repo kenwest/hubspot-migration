@@ -6,17 +6,18 @@ select * from (
     from
                 civicrm_group   g
         join    (
-            values
-                row ('City Legal',                  'HubSpotMigration_Network_CityLegal'),
-                row ('EPT',                         'HubSpotMigration_Network_EPT'),
-                row ('Fellowship beyond numbers',   'HubSpotMigration_Network_FBN'),
-                row ('Headstart',                   'HubSpotMigration_Network_Headstart'),
-                row ('In House groups',             'HubSpotMigration_Network_InHouse'),
-                row ('Mandarin',                    'HubSpotMigration_Network_Mandarin'),
-                row ('Mens Fellowship',             'HubSpotMigration_Network_MensFellowship'),
-                row ('Reframe',                     'HubSpotMigration_Network_Reframe'),
-                row ('Transition group',            'HubSpotMigration_Network_Transition')
-                )   as  network(name, title)    on  network.title = g.title
+                    values
+                        row ('City Legal',                  'HubSpotMigration_Network_CityLegal'),
+                        row ('EPT',                         'HubSpotMigration_Network_EPT'),
+                        row ('Fellowship beyond numbers',   'HubSpotMigration_Network_FBN'),
+                        row ('Headstart',                   'HubSpotMigration_Network_Headstart'),
+                        row ('In House groups',             'HubSpotMigration_Network_InHouse'),
+                        row ('Mandarin',                    'HubSpotMigration_Network_Mandarin'),
+                        row ('Mens Fellowship',             'HubSpotMigration_Network_MensFellowship'),
+                        row ('Reframe',                     'HubSpotMigration_Network_Reframe'),
+                        row ('Transition group',            'HubSpotMigration_Network_Transition')
+                )
+                    as  network(name, title)    on  network.title = g.title
 ) as    newrow(id, is_network, name)
 on duplicate key
 update

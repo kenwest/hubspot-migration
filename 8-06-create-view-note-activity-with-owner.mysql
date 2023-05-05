@@ -1,0 +1,43 @@
+create or replace view
+    cbf_migrate_note_activity_with_owner
+as
+    select
+        /* Export control */
+        contact.id,
+        contact.display_name,
+        at.label,
+        now(),
+        a.activity_date_time,
+        m.marketing_contact_188,
+        m.included_in_sample_migration_184,
+        /* Data fields */
+        unix_timestamp(a.activity_date_time),
+        owner.email,
+        concat_ws('\n',
+            if(at.label  is null, null, concat_ws(': ', 'Activity', at.label)),
+            if(a.subject is null, null, concat_ws(': ', 'Subject', a.subject)),
+            a.details)
+    from
+                    civicrm_value_hubspot_migra_41  m
+        join        civicrm_contact                 contact on  contact.id = m.entity_id
+        join        civicrm_activity_contact        target  on  target.contact_id = contact.id
+        join        civicrm_activity                a       on  a.id = target.activity_id
+        join        civicrm_option_value            at      on  at.value = a.activity_type_id
+        left join   civicrm_activity_contact        source  on  source.activity_id = a.id
+        left join   civicrm_contact                 staff   on  staff.id = source.contact_id
+        left join   civicrm_email                   owner   on  owner.contact_id = staff.id
+    where
+            m.included_in_migration_183     =       1
+        and target.record_type_id           =       3           /* Activity Assignees = 1, Activity Source = 2, Activity Targets = 3 */
+        and source.record_type_id           =       2           /* Activity Assignees = 1, Activity Source = 2, Activity Targets = 3 */
+        and a.status_id                     =       2           /* Completed */
+        and staff.contact_sub_type          like    '%Staff%'
+        and owner.is_primary                =       1
+        and at.option_group_id              =       2           /* Activity Type is one of ... */
+        and at.label                        in      (
+                                                        'Meeting',
+                                                        'Follow up',
+                                                        'Become Christian',
+                                                        'Staff assessment',
+                                                        'People work'
+                                                    )

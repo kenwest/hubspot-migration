@@ -1,0 +1,30 @@
+create or replace view
+    cbf_migrate_note_note
+as
+    select
+        /* Export control */
+        contact.id,
+        contact.display_name,
+        'Note',
+        now(),
+        note.modified_date,
+        m.marketing_contact_188,
+        m.included_in_sample_migration_184,
+        /* Data fields */
+        unix_timestamp(note.modified_date),
+        owner.email,
+        concat_ws('\n',
+            if(note.subject is null, null, concat_ws(': ', 'Subject', note.subject)),
+            note.note)
+    from
+                    civicrm_value_hubspot_migra_41  m
+        join        civicrm_contact                 contact on  contact.id = m.entity_id
+        join        civicrm_note                    note    on  note.entity_id = contact.id
+        left join   civicrm_contact                 staff   on  staff.id = note.contact_id
+        left join   civicrm_email                   owner   on  owner.contact_id = staff.id
+    where
+            m.included_in_migration_183     =       1
+        and note.entity_table               =       'civicrm_contact'
+        and staff.contact_sub_type          like    '%Staff%'
+        and owner.is_primary                =       1
+ 

@@ -1,0 +1,22 @@
+create or replace view
+    cbf_migrate_static_list_members
+as
+    select
+        /* Export control */
+        m.entity_id                         as  civicrm_contact_id,
+        now()                               as  time_of_migration,
+        c.modified_date                     as  contact_last_modified_at,
+        m.marketing_contact_188             as  is_marketing_contact,
+        m.included_in_sample_migration_184  as  is_in_sample,
+        c.display_name                      as  contact_name,
+        /* Data fields */
+        g.hubspot_name_203                  as  list_name
+    from
+                civicrm_value_hubspot_migra_41  m
+        join    civicrm_contact                 c   on  c.id = m.entity_id
+        join    civicrm_group_contact           gc  on  gc.contact_id = c.id
+        join    civicrm_value_hubspot_migra_43  g   on  g.entity_id = gc.group_id
+    where
+            m.included_in_migration_183 =       1
+        and gc.status                   =       'Added'
+        and g.hubspot_name_203          is not  null

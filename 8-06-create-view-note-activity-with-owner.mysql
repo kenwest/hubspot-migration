@@ -3,20 +3,20 @@ create or replace view
 as
     select
         /* Export control */
-        contact.id,
-        contact.display_name,
-        at.label,
-        now(),
-        a.activity_date_time,
-        m.marketing_contact_188,
-        m.included_in_sample_migration_184,
+        contact.id                              as  civicrm_contact_id,
+        contact.display_name                    as  contact_name,
+        at.label                                as  civicrm_activity_type,
+        now()                                   as  time_of_migration,
+        a.activity_date_time                    as  note_last_modified_at,
+        m.marketing_contact_188                 as  is_marketing_contact,
+        m.included_in_sample_migration_184      as  is_in_sample,
         /* Data fields */
-        unix_timestamp(a.activity_date_time),
-        owner.email,
+        unix_timestamp(a.activity_date_time)    as  time_stamp,
+        owner.email                             as  owner_id,
         concat_ws('\n',
             if(at.label  is null, null, concat_ws(': ', 'Activity', at.label)),
             if(a.subject is null, null, concat_ws(': ', 'Subject', a.subject)),
-            a.details)
+            a.details)                          as  note_body
     from
                     civicrm_value_hubspot_migra_41  m
         join        civicrm_contact                 contact on  contact.id = m.entity_id

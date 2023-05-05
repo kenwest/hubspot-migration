@@ -16,7 +16,7 @@ as
         concat_ws('\n',
             if(at.label  is null, null, concat_ws(': ', 'Activity', at.label)),
             if(a.subject is null, null, concat_ws(': ', 'Subject', a.subject)),
-            a.details)                          as note_body
+            a.details)                          as  note_body
     from
                     civicrm_value_hubspot_migra_41  m
         join        civicrm_contact                 contact on  contact.id = m.entity_id

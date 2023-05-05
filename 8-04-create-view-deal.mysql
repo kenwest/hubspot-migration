@@ -16,7 +16,7 @@ as
         'Closed Won'                            as  stage,
         c.total_amount                          as  amount,
         'AUD'                                   as  currency,
-        c.receive_date                          as  create_date,
+        unix_timestamp(c.receive_date)          as  create_date,
         c.source                                as  deal_description,
         concat_ws(' ',
             ft.name,

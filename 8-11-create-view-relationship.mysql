@@ -1,0 +1,57 @@
+create or replace view
+    cbf_migrate_relationship
+as
+    select
+        /* Export control */
+        now()                                   as  time_of_migration,
+        (
+                ma.included_in_sample_migration_184 = 1
+            and mb.included_in_sample_migration_184 = 1
+        )                                       as  is_in_sample,
+        ca.display_name                         as  contact_name_1,
+        cb.display_name                         as  contact_name_2,
+        /* Data fields */
+        ca.id                                   as  civicrm_contact_1,
+        cb.id                                   as  civicrm_contact_2,
+        rel_name.hubspot                        as  relationship_type,
+        null                                    as  relationship_nature,
+        concat_ws(' ',
+            ca.first_name, '+',
+            cb.first_name, ':',
+            rel_name.hubspot)                   as  relationship_name,
+                r.description                           as  relationship_description,
+                flags.value                             as  relationship_details
+    from
+                    civicrm_value_hubspot_migra_41  ma
+        join        civicrm_contact                 ca      on  ca.id = ma.entity_id
+        join        civicrm_relationship            r       on  r.contact_id_a = ca.id
+        join        civicrm_relationship_type       rt      on  r.relationship_type_id = rt.id
+        join        civicrm_contact                 cb      on  cb.id = r.contact_id_b
+        join        civicrm_value_hubspot_migra_41  mb      on  mb.entity_id = cb.id
+        left join   (values
+                        row('Meeting one-to-one with', 'Meeting one-to-one')
+                    )
+                as  rel_name(civicrm, hubspot)              on  rel_name.civicrm = rt.label_a_b
+        left join   (
+                        select
+                            entity_id,
+                            concat_ws(': ',
+                                'Flags',
+                                concat_ws(', ',
+                                    if(engaging, 'Engaging', null),
+                                    if(establishing, 'Establishing', null),
+                                    if(mobilising, 'Mobilising', null),
+                                    if(equipping, 'Equipping', null),
+                                    if(is_leader_39, 'Leading', null)
+                                )
+                            )
+                        from civicrm_value_1_strategy_4
+                        where engaging = 1 or establishing = 1 or mobilising = 1 or equipping = 1 or is_leader_39 = 1
+                    )
+                as  flags(id, value)                        on flags.id = r.id
+    where
+                rt.label_a_b                    in  ('Meeting one-to-one with')
+        and (
+                r.is_active                     =   1
+            and ifnull(r.end_date, now())       >=  now()
+            )

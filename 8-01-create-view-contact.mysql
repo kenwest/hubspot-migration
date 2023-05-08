@@ -13,9 +13,9 @@ as
         c.last_name                             as  last_name,
         mobile.value                            as  mobile,
         phone.value                             as  phone,
-        other_phones.value                      as  other_phones,
-        e1.email                                as  primary_email,
-        e2.email                                as  secondary_email,
+        other_phones.value                      as  additional_phones,
+        e1.email                                as  email,
+        e2.email                                as  additional_emails,
         c.addressee_custom                      as  addressee,
         address.supplementary                   as  address_supplementary,
         address.street                          as  address_street,
@@ -23,7 +23,7 @@ as
         address.postal_code                     as  address_postal_code,
         address.state                           as  address_state,
         address.country                         as  address_country,
-        other_locations.value                   as  other_locations,
+        other_locations.value                   as  additional_addresses,
         null                                    as  region,                 /* @TODO */
         unix_timestamp(c.birth_date)            as  birth_date,
         class.year_started_work_35              as  year_entered_workforce,
@@ -97,11 +97,13 @@ as
                 where       entity_type_200 = 'email' and entity_slot_198 = 1
             ) as    e1(id, email)                       on e1.id = c.id
         left join   (
-                select      entity_id, group_concat(entity_value_195 separator ';')
-                from        civicrm_value_hubspot_migra_42
-                where       entity_type_200 = 'email' and ifnull(entity_slot_198, 0) <> 1
-                group by    entity_id
-                order by    entity_id, entity_weight_196 desc
+                select      d.entity_id, group_concat(concat_ws(' ', d.entity_value_195, loc.suffix) separator ', ')
+                from        civicrm_value_hubspot_migra_42 d
+                            join civicrm_email e on e.id = d.entity_id_194
+                            left join (values row(1, '(Home)'), row(2, '(Work)')) as loc(id, suffix) on loc.id = e.location_type_id
+                where       d.entity_type_200 = 'email' and ifnull(d.entity_slot_198, 0) <> 1
+                group by    d.entity_id
+                order by    d.entity_id, d.entity_weight_196 desc
             ) as    e2(id, email)                       on e2.id = c.id
         left join   (
                 select      d.entity_id, a.supplemental_address_1, a.street_address, a.city, a.postal_code, s.abbreviation, c.name

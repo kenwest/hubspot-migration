@@ -1,0 +1,4 @@
+update
+    civicrm_value_hubspot_migra_44
+set
+    owner_id_208    = null

@@ -22,7 +22,7 @@ as
         null                                    as  call_recording_url,
         'COMPLETED'                             as  call_status,
         a.subject                               as  call_title,
-        owner.email                             as  owner_id,
+        owner.owner_id_208                      as  owner_id,
         null                                    as  activity_type       /* @TODO */
     from
                     civicrm_value_hubspot_migra_41  m
@@ -30,16 +30,11 @@ as
         join        civicrm_activity_contact        target  on  target.contact_id = contact.id
         join        civicrm_activity                a       on  a.id = target.activity_id
         join        civicrm_option_value            at      on  at.value = a.activity_type_id
-        left join   civicrm_activity_contact        source  on  source.activity_id = a.id
-        left join   civicrm_contact                 staff   on  staff.id = source.contact_id
-        left join   civicrm_email                   owner   on  owner.contact_id = staff.id
+        left join   civicrm_value_hubspot_migra_44  owner   on  owner.entity_id = a.id
     where
             m.included_in_migration_183     =       1
         and target.record_type_id           =       3           /* Activity Assignees = 1, Activity Source = 2, Activity Targets = 3 */
-        and source.record_type_id           =       2           /* Activity Assignees = 1, Activity Source = 2, Activity Targets = 3 */
         and a.status_id                     =       2           /* Completed */
-        and staff.contact_sub_type          like    '%Staff%'
-        and owner.is_primary                =       1
         and at.option_group_id              =       2           /* Activity Type is one of ... */
         and at.label                        in      (
                                                         'Phone Call',

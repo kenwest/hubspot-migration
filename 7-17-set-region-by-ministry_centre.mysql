@@ -1,0 +1,21 @@
+update
+    civicrm_value_hubspot_migra_41  m,
+    (
+        select
+            c.id, max(t.description)
+        from
+                    civicrm_contact     c
+            join    civicrm_entity_tag  ct  on  ct.entity_id = c.id
+            join    civicrm_tag         t   on  t.id = ct.tag_id
+        where
+                ct.entity_table =       'civicrm_contact'
+            and t.name          like    'Ministry centre is %'
+        group by
+            c.id
+    ) as r(id, region)
+set
+    m.region_209                    =   r.region
+where
+        m.included_in_migration_183 =   1
+    and m.entity_id                 =   r.id
+    and m.region_209                is  null

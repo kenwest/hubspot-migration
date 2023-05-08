@@ -1,0 +1,26 @@
+update
+    civicrm_value_hubspot_migra_41  m,
+    (
+        select      d.entity_id, s.abbreviation
+        from        civicrm_value_hubspot_migra_42 d
+                    join civicrm_address a on a.id = d.entity_id_194
+                    join civicrm_state_province s on s.id = a.state_province_id
+                    join civicrm_country c on c.id = a.country_id
+        where       d.entity_type_200 = 'address' and d.entity_slot_198 = 1
+    ) as a (id, state),
+    (values
+        row('NSW', 'Sydney'),
+        row('VIC', 'Melbourne'),
+        row('QLD', 'Brisbane'),
+        row('ACT', 'Canberra'),
+        row('TAS', 'Hobart'),
+        row('SA',  'Adelaide'),
+        row('WA',  'Perth')
+    ) as r(state, region)
+set
+    m.region_209                    =   r.region
+where
+        m.included_in_migration_183 =   1
+    and m.entity_id                 =   a.id
+    and a.state                     =   r.state
+    and m.region_209                is  null

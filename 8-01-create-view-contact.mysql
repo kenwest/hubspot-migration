@@ -24,7 +24,7 @@ as
         address.state                           as  address_state,
         address.country                         as  address_country,
         other_locations.value                   as  additional_addresses,
-        null                                    as  region,                 /* @TODO */
+        m.region_209                            as  region,
         unix_timestamp(c.birth_date)            as  birth_date,
         class.year                              as  year_entered_workforce,
         c.job_title                             as  job_title,

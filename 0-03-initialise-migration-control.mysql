@@ -1,13 +1,18 @@
 update
     civicrm_value_hubspot_migra_41
 set
-    excluded_from_migration_182         = null,
-    included_in_migration_183           = null,
-    marketing_contact_188               = null,
-    included_in_sample_migration_184    = null,
-    migrated_with_no_primary_email_185  = null,
-    reason_excluded_186                 = '',
-    reason_included_187                 = '',
-    reason_marketing_189                = '',
-    quartile_191                        = null,
-    decile_192                          = null
+    excluded_from_migration_182         =   null,
+    included_in_migration_183           =   null,
+    marketing_contact_188               =   null,
+    included_in_sample_migration_184    =   null,
+    migrated_with_no_primary_email_185  =   null,
+    reason_excluded_186                 =   '',
+    reason_included_187                 =   '',
+    reason_marketing_189                =   '',
+    quartile_191                        =   null,
+    decile_192                          =   null,
+    region_209                          =   null,
+    number_of_events_210                =   null,
+    number_of_trainings_211             =   null,
+    number_of_donations_212             =   null,
+    hubspot_user_email_213              =   null

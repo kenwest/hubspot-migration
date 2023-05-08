@@ -1,0 +1,22 @@
+update
+    civicrm_value_hubspot_migra_41  m,
+    (
+        select
+            p.contact_id, count(distinct p.event_id)
+        from
+                    civicrm_participant             p
+            join    civicrm_participant_status_type ps      on ps.id = p.status_id
+            join    civicrm_event                   e       on e.id = p.event_id
+            join    civicrm_option_value            et      on e.event_type_id = et.value
+        where
+                    et.option_group_id      =       14          /* et is an Event Type */
+            and     et.label                in      ('Engaging', 'Establishing', 'Mobilising')
+            and     ps.name                 in      ('Attended', 'Registered')
+        group by
+            p.contact_id
+    )   as  n(id, counter)
+set
+    m.number_of_events_210          =   n.counter
+where
+        m.included_in_migration_183 =   1
+    and m.entity_id                 =   n.id

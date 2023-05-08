@@ -47,12 +47,12 @@ as
         dash.is_a_disciple_maker_70 = 'C'       as  is_bible_reader,
         dash.disciple_maker_reading_69          as  bible_reader_count,
         dash.last_significant_activity_97       as  civicrm_last_significant_activity,
-        null                                    as  number_of_events,       /* @TODO */
-        null                                    as  number_of_trainings,    /* @TODO */
+        m.number_of_events_210                  as  number_of_events,
+        m.number_of_trainings_211               as  number_of_trainings,
         class.relationships_team_contact_180    as  contact_owner,
         class.staff_contact_61                  as  staff_buddy,
         class.fundraising_contact_179           as  donor_manager,
-        null                                    as  number_of_donations,    /* @TODO */
+        m.number_of_donations_212               as  number_of_donations,
         null                                    as  involvement_lead_score,
         null                                    as  depth_lead_score,
         null                                    as  competence,

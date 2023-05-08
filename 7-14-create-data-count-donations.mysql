@@ -1,0 +1,23 @@
+update
+    civicrm_value_hubspot_migra_41  m,
+    (
+        select
+            c.contact_id, count(distinct c.id)
+        from
+                    civicrm_contribution        c
+            join    civicrm_option_value        v       on  v.value = c.contribution_status_id
+            join    civicrm_financial_type      ft      on  ft.id = c.financial_type_id
+         where
+                    v.option_group_id       =       11              /* Contribution Status ... */
+            and     v.label                 in      ('Completed')   /* ... is Completed */
+            and     ft.name                 in      ('Donation')
+            and     c.is_test               <>      1               /* Exclude test transactions ... */
+            and     c.total_amount          <>      0               /* ... and zero-valued contributions */
+        group by
+            c.contact_id
+    )   as  n(id, counter)
+set
+    m.number_of_donations_212       =   n.counter
+where
+        m.included_in_migration_183 =   1
+    and m.entity_id                 =   n.id

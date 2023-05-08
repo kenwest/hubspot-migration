@@ -1,0 +1,10 @@
+update
+    civicrm_value_hubspot_migra_41  m,
+    civicrm_email                   e
+set
+    m.hubspot_user_email_213        =   e.email
+where
+        m.included_in_migration_183 =   1
+    and m.is_hubspot_user_207       =   1
+    and m.entity_id                 =   e.contact_id
+    and e.is_primary                =   1

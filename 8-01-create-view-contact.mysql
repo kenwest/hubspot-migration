@@ -99,7 +99,7 @@ as
                 order by    d.entity_id, d.entity_weight_196 desc
             ) as    other_phones(id, value)             on other_phones.id = c.id
         left join   (
-                select      entity_id, entity_value_195
+                select      entity_id, if(entity_id=10222, 'ken.west@citybibleforum.org;west.ken.au@gmail.com', entity_value_195)    /* @TODO remove this test code */
                 from        civicrm_value_hubspot_migra_42
                 where       entity_type_200 = 'email' and entity_slot_198 = 1
             ) as    e1(id, email)                       on e1.id = c.id

@@ -8,6 +8,8 @@ as
         contact.modified_date               as  contact_last_modified_at,
         m.included_in_sample_migration_184  as  is_in_sample,
         contact.display_name                as  contact_name,
+        ascii(network.network_name_202) + length(network.network_name_202)       /* @TODO remove temp code */
+                                            as  weight,
         /* Data fields */
         network.network_name_202            as  company,
         null                                as  association_label
@@ -31,6 +33,7 @@ as
         contact.modified_date,
         m.included_in_sample_migration_184,
         contact.display_name,
+        0,                                                                       /* @TODO remove temp code */
         grp.household_name,
         if(s.is_leader_39 = 1, 'Group Leader', null)
     from

@@ -17,15 +17,8 @@ insert into
 civicrm_value_hubspot_migra_42 (entity_id, entity_type_200, entity_id_194, entity_value_195, entity_weight_196, entity_slot_198)
 select * from (
     select
-        entity_id, 'email', 0, null, 1000000000, null
-    from
-        civicrm_value_hubspot_migra_41
-    where
-        migrated_with_no_primary_email_185 = 1
-    union
-    select
         e.contact_id,
-        'email',
+        'other_email',
         max(e.id),
         e.email,
             if(max(e.on_hold * (e.is_primary + e.is_bulkmail)), 0, 100000000) +

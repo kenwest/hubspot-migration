@@ -1,0 +1,9 @@
+update
+    civicrm_value_hubspot_migra_42  e,
+    civicrm_value_hubspot_migra_41  m
+set
+    e.entity_type_200               =   'email'
+where
+        e.entity_id                 =   m.entity_id
+    and e.entity_type_200           =   'other_email'
+    and m.hubspot_user_email_213    =   e.entity_value_195

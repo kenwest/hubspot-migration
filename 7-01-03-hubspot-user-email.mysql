@@ -1,9 +1,24 @@
+/*
+ *   If a Contact has a HubSpot User Email 'email' Contact Email, and that email is not
+ *   a primary/secondary email, then make it so.
+ *
+ */
 update
     civicrm_value_hubspot_migra_42  e,
-    civicrm_value_hubspot_migra_41  m
+    (
+        select      d.id,
+                    d.entity_value_195
+        from        civicrm_value_hubspot_migra_42 d
+                    join civicrm_value_hubspot_migra_41 m on m.entity_id = d.entity_id
+        where       d.entity_type_200 = 'other_email'
+                    and m.hubspot_user_email_213 = d.entity_value_195
+                    and not exists (
+                        select *
+                        from civicrm_value_hubspot_migra_42
+                        where entity_value_195 = d.entity_value_195 and entity_type_200 = 'email')
+        group by    d.id, d.entity_value_195
+    ) as a(id, email)
 set
-    e.entity_type_200               =   'email'
+    e.entity_type_200       =   'email'
 where
-        e.entity_id                 =   m.entity_id
-    and e.entity_type_200           =   'other_email'
-    and m.hubspot_user_email_213    =   e.entity_value_195
+        e.id                =   a.id

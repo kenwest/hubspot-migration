@@ -104,17 +104,18 @@ as
                 from        civicrm_value_hubspot_migra_42
                 where       entity_type_200 = 'email' and entity_slot_198 = 1
             ) as    e1(id, email)                       on e1.id = c.id
-        left join   (values
-                row(8805, 'craig.josling@gmail.com;craig.josling@thirdspace.org.au'),
-                row(10222, 'west.ken.au@gmail.com')
+        left join   (
+                select      entity_id, group_concat(entity_value_195 separator ';')
+                from        civicrm_value_hubspot_migra_42
+                where       entity_type_200 = 'email' and ifnull(entity_slot_198, 0) <> 1
+                group by    entity_id
             ) as    e2(id, email)                       on e2.id = c.id
         left join   (
                 select      d.entity_id, group_concat(concat_ws(' ', d.entity_value_195, loc.suffix) separator ', ')
                 from        civicrm_value_hubspot_migra_42 d
                             join civicrm_email e on e.id = d.entity_id_194
                             left join (values row(1, '(Home)'), row(2, '(Work)')) as loc(id, suffix) on loc.id = e.location_type_id
-                where       (d.entity_type_200 = 'email' and ifnull(d.entity_slot_198, 0) <> 1)                                      /* @TODO remove this temp code */
-                            or (d.entity_type_200 = 'other_email')
+                where       d.entity_type_200 = 'other_email'
                 group by    d.entity_id
                 order by    d.entity_id, d.entity_weight_196 desc
             ) as    e3(id, email)                       on e3.id = c.id

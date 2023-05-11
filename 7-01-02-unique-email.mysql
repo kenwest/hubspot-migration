@@ -1,0 +1,13 @@
+update
+    civicrm_value_hubspot_migra_42  e,
+    (
+        select      min(id), entity_value_195, count(distinct entity_id)
+        from        civicrm_value_hubspot_migra_42
+        where       entity_type_200 = 'other_email'
+        group by    entity_value_195
+    ) as a(id, email, counter)
+set
+    e.entity_type_200       =   'email'
+where
+        e.id                =   a.id
+    and a.counter           =   1

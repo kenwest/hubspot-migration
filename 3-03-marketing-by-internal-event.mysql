@@ -17,6 +17,7 @@ select * from (
                 e.end_date              >=      cntl.cutoff /* Event after cutoff date */
         and     et.option_group_id      =       14          /* et is an Event Type */
         and     et.label                not in  ('External')
+        and     p.is_test               =       0
         and     ps.name                 in      ('Attended', 'Registered', 'No-show', 'Cancelled')
     group by
         p.contact_id

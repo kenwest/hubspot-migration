@@ -12,6 +12,7 @@ update
                     et.option_group_id      =       14          /* et is an Event Type */
             and     et.label                in      ('Equipping')
             and     ps.name                 in      ('Attended', 'Registered')
+            and     p.is_test               =       0
         group by
             p.contact_id
     )   as  n(id, counter)

@@ -16,8 +16,8 @@ as
         rel_name.hubspot                        as  relationship_type,
         null                                    as  relationship_nature,
         concat_ws(' ',
-            ca.first_name, '+',
-            cb.first_name, ':',
+            ca.display_name, '+',
+            cb.display_name, ':',
             rel_name.hubspot)                   as  relationship_name,
                 r.description                           as  relationship_description,
                 flags.value                             as  relationship_details

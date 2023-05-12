@@ -1,13 +1,19 @@
 update
     civicrm_value_hubspot_migra_41  m,
     (
-        select      d.entity_id, s.abbreviation
+        select      d.entity_id, s.abbreviation, d.entity_weight_196
         from        civicrm_value_hubspot_migra_42 d
                     join civicrm_address a on a.id = d.entity_id_194
                     join civicrm_state_province s on s.id = a.state_province_id
                     join civicrm_country c on c.id = a.country_id
-        where       d.entity_type_200 = 'address' and d.entity_slot_198 = 1
-    ) as a (id, state),
+        where       d.entity_type_200 = 'address'
+    ) as a (contact, state, weight),
+    (
+        select      entity_id, max(entity_weight_196)
+        from        civicrm_value_hubspot_migra_42
+        where       entity_type_200 = 'address'
+        group by    entity_id
+    ) as max_address(contact, weight),
     (values
         row('NSW', 'Sydney'),
         row('VIC', 'Melbourne'),
@@ -21,6 +27,8 @@ set
     m.region_209                    =   r.region
 where
         m.included_in_migration_183 =   1
-    and m.entity_id                 =   a.id
-    and a.state                     =   r.state
     and m.region_209                is  null
+    and a.contact                   =   m.entity_id
+    and max_address.contact         =   a.contact
+    and max_address.weight          =   a.weight
+    and r.state                     =   a.state

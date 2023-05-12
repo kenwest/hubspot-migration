@@ -81,34 +81,102 @@ as
         left join   civicrm_value_contact_dashboard_18  dash    on  dash.entity_id = c.id
         left join   civicrm_value_fundraising_21        fund    on  fund.entity_id = c.id
         left join   (
-                select      entity_id, entity_value_195
-                from        civicrm_value_hubspot_migra_42
-                where       entity_type_200 = 'mobile' and entity_slot_198 = 1
+                select d.contact, d.item
+                from (
+                    select      entity_id, entity_value_195, entity_weight_196
+                    from        civicrm_value_hubspot_migra_42
+                    where       entity_type_200 = 'mobile'
+                ) as d(contact, item, weight)
+                join (
+                    select      entity_id, max(entity_weight_196)
+                    from        civicrm_value_hubspot_migra_42
+                    where       entity_type_200 = 'mobile'
+                    group by    entity_id
+                ) as maximum(contact, weight) on d.contact = maximum.contact
+                where d.weight = maximum.weight
             ) as    mobile(id, value)                   on mobile.id = c.id
         left join   (
-                select      entity_id, entity_value_195
-                from        civicrm_value_hubspot_migra_42
-                where       entity_type_200 = 'phone' and entity_slot_198 = 1
+                select d.contact, d.item
+                from (
+                    select      entity_id, entity_value_195, entity_weight_196
+                    from        civicrm_value_hubspot_migra_42
+                    where       entity_type_200 = 'phone'
+                ) as d(contact, item, weight)
+                join (
+                    select      entity_id, max(entity_weight_196)
+                    from        civicrm_value_hubspot_migra_42
+                    where       entity_type_200 = 'phone'
+                    group by    entity_id
+                ) as maximum(contact, weight) on d.contact = maximum.contact
+                where d.weight = maximum.weight
             ) as    phone(id, value)                    on phone.id = c.id
         left join   (
-                select      d.entity_id, group_concat(concat_ws(' ', d.entity_value_195, loc.suffix) separator ', ')
-                from        civicrm_value_hubspot_migra_42 d
-                            join civicrm_phone p on p.id = d.entity_id_194
+                select      d.contact, group_concat(concat_ws(' ', d.item_value, loc.suffix) separator ', ')
+                from        (
+                                select d.contact, d.item_id, d.item_value, d.weight
+                                from (
+                                    select      entity_id, entity_id_194, entity_value_195, entity_weight_196
+                                    from        civicrm_value_hubspot_migra_42
+                                    where       entity_type_200 in ('mobile', 'phone')
+                                ) as d(contact, item_id, item_value, weight)
+                                join (
+                                    select      entity_id, max(entity_weight_196)
+                                    from        civicrm_value_hubspot_migra_42
+                                    where       entity_type_200 = 'mobile'
+                                    group by    entity_id
+                                ) as max_mobile(contact, weight) on max_mobile.contact = d.contact
+                                join (
+                                    select      entity_id, max(entity_weight_196)
+                                    from        civicrm_value_hubspot_migra_42
+                                    where       entity_type_200 = 'phone'
+                                    group by    entity_id
+                                ) as max_phone(contact, weight) on max_phone.contact = d.contact
+                                where
+                                        d.weight != max_mobile.weight
+                                    and d.weight != max_phone.weight
+                            )
+                            as d(contact, item_id, item_value, weight)
+                            join civicrm_phone p on p.id = d.item_id
                             left join (values row(1, '(Home)'), row(2, '(Work)')) as loc(id, suffix) on loc.id = p.location_type_id
-                where       d.entity_type_200 in ('mobile', 'phone') and ifnull(d.entity_slot_198, 0) <> 1
-                group by    d.entity_id
-                order by    d.entity_id, d.entity_weight_196 desc
+                group by    d.contact
+                order by    d.contact, d.weight desc
             ) as    other_phones(id, value)             on other_phones.id = c.id
         left join   (
-                select      entity_id, entity_value_195
-                from        civicrm_value_hubspot_migra_42
-                where       entity_type_200 = 'email' and entity_slot_198 = 1
+                select d.contact, d.item
+                from (
+                    select      entity_id, entity_value_195, entity_weight_196
+                    from        civicrm_value_hubspot_migra_42
+                    where       entity_type_200 = 'email'
+                ) as d(contact, item, weight)
+                join (
+                    select      entity_id, max(entity_weight_196)
+                    from        civicrm_value_hubspot_migra_42
+                    where       entity_type_200 = 'email'
+                    group by    entity_id
+                ) as maximum(contact, weight) on d.contact = maximum.contact
+                where d.weight = maximum.weight
             ) as    e1(id, email)                       on e1.id = c.id
         left join   (
-                select      entity_id, group_concat(entity_value_195 separator ';')
-                from        civicrm_value_hubspot_migra_42
-                where       entity_type_200 = 'email' and ifnull(entity_slot_198, 0) <> 1
-                group by    entity_id
+                select      d.contact, group_concat(d.item_value separator ';')
+                from        (
+                                select d.contact, d.item_id, d.item_value, d.weight
+                                from (
+                                    select      entity_id, entity_id_194, entity_value_195, entity_weight_196
+                                    from        civicrm_value_hubspot_migra_42
+                                    where       entity_type_200 = 'email'
+                                ) as d(contact, item_id, item_value, weight)
+                                join (
+                                    select      entity_id, max(entity_weight_196)
+                                    from        civicrm_value_hubspot_migra_42
+                                    where       entity_type_200 = 'email'
+                                    group by    entity_id
+                                ) as max_email(contact, weight) on max_email.contact = d.contact
+                                where
+                                        d.weight != max_email.weight
+                            )
+                            as d(contact, item_id, item_value, weight)
+                group by    d.contact
+                order by    d.contact, d.weight desc
             ) as    e2(id, email)                       on e2.id = c.id
         left join   (
                 select      d.entity_id, group_concat(concat_ws(' ', d.entity_value_195, loc.suffix) separator ', ')
@@ -120,23 +188,52 @@ as
                 order by    d.entity_id, d.entity_weight_196 desc
             ) as    e3(id, email)                       on e3.id = c.id
         left join   (
-                select      d.entity_id, a.supplemental_address_1, a.street_address, a.city, a.postal_code, s.abbreviation, c.name
-                from        civicrm_value_hubspot_migra_42 d
-                            join civicrm_address a on a.id = d.entity_id_194
+                select      d.contact, a.supplemental_address_1, a.street_address, a.city, a.postal_code, s.abbreviation, c.name
+                from        (
+                                select d.contact, d.item_id, d.item_value, d.weight
+                                from (
+                                    select      entity_id, entity_id_194, entity_value_195, entity_weight_196
+                                    from        civicrm_value_hubspot_migra_42
+                                    where       entity_type_200 = 'address'
+                                ) as d(contact, item_id, item_value, weight)
+                                join (
+                                    select      entity_id, max(entity_weight_196)
+                                    from        civicrm_value_hubspot_migra_42
+                                    where       entity_type_200 = 'address'
+                                    group by    entity_id
+                                ) as max_address(contact, weight) on max_address.contact = d.contact
+                                where
+                                        d.weight = max_address.weight
+                            )
+                            as d(contact, item_id, item_value, weight)
+                            join civicrm_address a on a.id = d.item_id
                             join civicrm_state_province s on s.id = a.state_province_id
                             join civicrm_country c on c.id = a.country_id
-                where       d.entity_type_200 = 'address' and d.entity_slot_198 = 1
             ) as    address(id, supplementary, street, city, postal_code, state, country)
                                                         on address.id = c.id
         left join   (
-                select      d.entity_id, group_concat(concat_ws(' ', d.entity_value_195, loc.suffix) separator '\n')
-                from        civicrm_value_hubspot_migra_42 d
-                            join civicrm_address a on a.id = d.entity_id_194
+                select      d.contact, group_concat(concat_ws(' ', d.item_value, loc.suffix) separator '\n')
+                from        (
+                                select d.contact, d.item_id, d.item_value, d.weight
+                                from (
+                                    select      entity_id, entity_id_194, entity_value_195, entity_weight_196
+                                    from        civicrm_value_hubspot_migra_42
+                                    where       entity_type_200 in ('address', 'location')
+                                ) as d(contact, item_id, item_value, weight)
+                                join (
+                                    select      entity_id, max(entity_weight_196)
+                                    from        civicrm_value_hubspot_migra_42
+                                    where       entity_type_200 = 'address'
+                                    group by    entity_id
+                                ) as max_address(contact, weight) on max_address.contact = d.contact
+                                where
+                                        d.weight != max_address.weight
+                            )
+                            as d(contact, item_id, item_value, weight)
+                            join civicrm_address a on a.id = d.item_id
                             left join (values row(1, '(Home)'), row(2, '(Work)')) as loc(id, suffix) on loc.id = a.location_type_id
-                where       (d.entity_type_200 = 'address' and ifnull(d.entity_slot_198, 0) <> 1)
-                            or (d.entity_type_200 = 'location')
-                group by    d.entity_id
-                order by    d.entity_id, d.entity_weight_196 desc
+                group by    d.contact
+                order by    d.contact, d.weight desc
             ) as    other_locations(id, value)          on other_locations.id = c.id
         left join   (
                 select      c.id, g.label

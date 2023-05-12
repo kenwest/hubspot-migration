@@ -28,6 +28,8 @@ select * from (
                 a.activity_date_time    >=      cntl.cutoff /* Activity after cutoff date */
         and     ac.record_type_id       =       3           /* Activity Assignees = 1, Activity Source = 2, Activity Targets = 3 */
         and     a.status_id             =       2           /* Completed */
+        and     a.is_test               =       0
+        and     a.is_deleted            =       0
         and not exists (                                    /* Exclude folks who register via the Group Licence webhook/agent */
                 select * from
                         civicrm_activity_contact    ac1

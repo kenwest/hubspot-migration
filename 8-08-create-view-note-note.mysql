@@ -13,7 +13,7 @@ as
         /* Data fields */
         unix_timestamp(note.modified_date)      as  time_stamp,
         owner.email                             as  owner_id,
-        concat_ws('\n',
+        concat_ws(' \n',
             if(note.subject is null, null, concat_ws(': ', 'Subject', note.subject)),
             note.note)                          as  note_body
     from

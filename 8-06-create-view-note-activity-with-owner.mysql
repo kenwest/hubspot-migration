@@ -13,7 +13,7 @@ as
         /* Data fields */
         unix_timestamp(a.activity_date_time)    as  time_stamp,
         owner.owner_id_208                      as  owner_id,
-        concat_ws('\n',
+        concat_ws(' \n',
             if(at.label  is null, null, concat_ws(': ', 'Activity', at.label)),
             if(a.subject is null, null, concat_ws(': ', 'Subject', a.subject)),
             a.details)                          as  note_body

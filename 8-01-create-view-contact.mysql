@@ -212,7 +212,7 @@ as
             ) as    address(id, supplementary, street, city, postal_code, state, country)
                                                         on address.id = c.id
         left join   (
-                select      d.contact, group_concat(concat_ws(' ', d.item_value, loc.suffix) separator '\n')
+                select      d.contact, group_concat(concat_ws(' ', d.item_value, loc.suffix) separator ' \n')
                 from        (
                                 select d.contact, d.item_id, d.item_value, d.weight
                                 from (

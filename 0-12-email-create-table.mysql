@@ -1,0 +1,25 @@
+create table if not exists cbf_migrate_email (
+    /* Export control */
+    id                      int             auto_increment  primary key,
+    civicrm_contact_id      int,
+    contact_name            varchar(128),
+    civicrm_activity_type   varchar(128),
+    time_of_migration       datetime,
+    email_last_modified_at  datetime,
+    is_marketing_contact    tinyint,
+    is_in_sample            tinyint,
+    random                  float,
+    /* Data fields */
+    time_stamp              int,
+    owner_id                varchar(255),
+    email_direction         varchar(16),
+    email_html              longtext,
+    email_status            varchar(16),
+    email_subject           varchar(255),
+    email_text              varchar(255),
+    email_headers           varchar(255),
+    /* Indexes */
+    index(civicrm_contact_id),
+    index(is_marketing_contact),
+    index(random)
+)

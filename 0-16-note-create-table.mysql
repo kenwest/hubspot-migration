@@ -1,0 +1,21 @@
+create table if not exists cbf_migrate_note (
+    /* Export control */
+    id                      int             auto_increment  primary key,
+    civicrm_contact_id      int,
+    contact_name            varchar(128),
+    civicrm_activity_type   varchar(128),
+    time_of_migration       datetime,
+    note_last_modified_at   datetime,
+    is_marketing_contact    tinyint,
+    is_in_sample            tinyint,
+    random                  float,
+    /* Data fields */
+    time_stamp              int,
+    owner_id                varchar(128),
+    note_body               longtext,
+    /* Indexes */
+    index(civicrm_contact_id),
+    index(is_marketing_contact),
+    index(is_in_sample),
+    index(random)
+)

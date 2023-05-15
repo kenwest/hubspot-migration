@@ -1,0 +1,31 @@
+create table if not exists cbf_migrate_call (
+    /* Export control */
+    id                      int             auto_increment  primary key,
+    civicrm_contact_id      int,
+    contact_name            varchar(128),
+    civicrm_activity_type   varchar(128),
+    time_of_migration       datetime,
+    call_last_modified_at   datetime,
+    is_marketing_contact    tinyint,
+    is_in_sample            tinyint,
+    random                  float,
+    /* Data fields */
+    time_stamp              int,
+    call_body               longtext,
+    callee_object_id        int,
+    callee_type             varchar(32),
+    call_direction          varchar(32),
+    call_disposition        varchar(64),
+    call_duration           integer,
+    call_from_number        varchar(32),
+    call_recording_url      varchar(64),
+    call_status             varchar(32),
+    call_title              varchar(255),
+    owner_id                varchar(128),
+    activity_type           varchar(32),       /* @TODO */
+    /* Indexes */
+    index(civicrm_contact_id),
+    index(is_marketing_contact),
+    index(is_in_sample),
+    index(random)
+)

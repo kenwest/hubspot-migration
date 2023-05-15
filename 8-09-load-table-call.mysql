@@ -1,6 +1,27 @@
-create or replace view
-    cbf_migrate_call
-as
+insert into
+cbf_migrate_call (
+    civicrm_contact_id,
+    contact_name,
+    civicrm_activity_type,
+    time_of_migration,
+    call_last_modified_at,
+    is_marketing_contact,
+    is_in_sample,
+    random,
+    time_stamp,
+    call_body,
+    callee_object_id,
+    callee_type,
+    call_direction,
+    call_disposition,
+    call_duration,
+    call_from_number,
+    call_recording_url,
+    call_status,
+    call_title,
+    owner_id,
+    activity_type
+)
     select
         /* Export control */
         contact.id                              as  civicrm_contact_id,
@@ -10,6 +31,7 @@ as
         a.activity_date_time                    as  call_last_modified_at,
         m.marketing_contact_188                 as  is_marketing_contact,
         m.included_in_sample_migration_184      as  is_in_sample,
+        rand()                                  as  random,
         /* Data fields */
         unix_timestamp(a.activity_date_time)    as  time_stamp,
         a.details                               as  call_body,

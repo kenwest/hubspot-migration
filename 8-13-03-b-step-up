@@ -1,0 +1,4 @@
+update
+    cbf_migration_control   cntl
+set
+    bulk_floor              =   bulk_floor + bulk_step

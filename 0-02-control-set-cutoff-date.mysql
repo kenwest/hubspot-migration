@@ -1,7 +1,9 @@
-insert into cbf_migration_control(cutoff, bulk_email, threshold)
+insert into cbf_migration_control(cutoff, threshold, bulk_email, bulk_floor, bulk_step)
 (
     select
         concat(year(now())-7, '-01-01'),
+        0.0,
         concat(year(now())-1, '-01-01'),
-        0
+        0.0,
+        0.34                                /* Use 3 steps and round up 1/3 to 0.34 */
 )

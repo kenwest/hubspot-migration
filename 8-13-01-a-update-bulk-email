@@ -1,0 +1,10 @@
+update
+    cbf_migrate_email               email,
+    cbf_migration_control           cntl,
+    civicrm_mailing                 mailing
+set
+    email.email_html = mailing.body_html
+where
+        email.civicrm_mailing_id    =       mailing.id
+    and email.random                between cntl.bulk_floor
+                                    and     cntl.bulk_floor + cntl.bulk_step

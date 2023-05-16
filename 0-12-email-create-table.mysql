@@ -9,6 +9,7 @@ create table if not exists cbf_migrate_email (
     is_marketing_contact    tinyint,
     is_in_sample            tinyint,
     random                  float,
+    civicrm_mailing_id      int,
     /* Data fields */
     time_stamp              int,
     owner_id                varchar(255),
@@ -21,5 +22,7 @@ create table if not exists cbf_migrate_email (
     /* Indexes */
     index(civicrm_contact_id),
     index(is_marketing_contact),
-    index(random)
+    index(is_in_sample),
+    index(random),
+    index(civicrm_mailing_id)
 )

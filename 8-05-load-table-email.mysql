@@ -8,6 +8,7 @@ cbf_migrate_email (
     is_marketing_contact,
     is_in_sample,
     random,
+    civicrm_mailing_id,
     time_stamp,
     owner_id,
     email_direction,
@@ -27,6 +28,9 @@ cbf_migrate_email (
         m.marketing_contact_188                 as  is_marketing_contact,
         m.included_in_sample_migration_184      as  is_in_sample,
         rand()                                  as  random,
+        if( at.label = 'Bulk Email',
+            mailing.id,
+            null)                               as  civicrm_mailing_id,
         /* Data fields */
         unix_timestamp(a.activity_date_time)    as  time_stamp,
         owner.owner_id_208                      as  owner_id,
@@ -43,6 +47,12 @@ cbf_migrate_email (
         join        civicrm_activity                a       on  a.id = target.activity_id
         join        civicrm_option_value            at      on  at.value = a.activity_type_id
         left join   civicrm_value_hubspot_migra_44  owner   on  owner.entity_id = a.id
+        left join   (
+                        select m.id
+                        from civicrm_mailing m join civicrm_mailing_job j on j.mailing_id = m.id join cbf_migration_control cntl
+                        where j.is_test = 0 and j.end_date >= cntl.bulk_email
+                        group by m.id
+                    )   as  mailing(id)                     on  mailing.id = a.source_record_id
     where
             m.included_in_migration_183     =       1
         and target.record_type_id           =       3           /* Activity Assignees = 1, Activity Source = 2, Activity Targets = 3 */

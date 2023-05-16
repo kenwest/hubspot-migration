@@ -1,0 +1,11 @@
+create or replace view
+    cbf_migrate_mailing_content
+as
+    select
+        mailing.id          as  civicrm_mailing_id,
+        mailing.body_html   as  email_html
+    from
+                cbf_migrate_email   email
+        join    civicrm_mailing     mailing on  mailing.id = email.civicrm_mailing_id
+    group by
+        mailing.id

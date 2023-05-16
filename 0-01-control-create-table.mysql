@@ -1,1 +1,5 @@
-create table cbf_migration_control (cutoff varchar(50), threshold float)
+create table cbf_migration_control (
+    cutoff      varchar(50),    /* Only contacts who are active after this date are considered for migration */
+    bulk_email  varchar(50),    /* Only bulk mailings sent after this date have their content migrated */
+    threshold   float           /* Threshod for randomly selecting 1,000 contacts */
+)

@@ -1,6 +1,7 @@
-insert into cbf_migration_control(cutoff, threshold)
+insert into cbf_migration_control(cutoff, bulk_email, threshold)
 (
     select
         concat(year(now())-7, '-01-01'),
+        concat(year(now())-1, '-01-01'),
         0
 )

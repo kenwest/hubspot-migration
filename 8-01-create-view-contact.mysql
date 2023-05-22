@@ -73,7 +73,12 @@ as
             ) as    pref(id, phone, email, postal_mail, sms)
                                                         on pref.id = c.id
         left join   (
-                select      c.entity_id, c.year_started_work_35, c.church, mo.hubspot_user_email_213, mb.hubspot_user_email_213, md.hubspot_user_email_213
+                select      c.entity_id,
+                            c.year_started_work_35,
+                            c.church,
+                            if(mo.id is null, null, if(mo.is_hubspot_user_207, mo.hubspot_user_email_213, 'data-issue@citybibleforum.org')),
+                            if(mb.id is null, null, if(mb.is_hubspot_user_207, mb.hubspot_user_email_213, 'data-issue@citybibleforum.org')),
+                            if(md.id is null, null, if(md.is_hubspot_user_207, md.hubspot_user_email_213, 'data-issue@citybibleforum.org'))
                 from        civicrm_value_1_classification_1 c
                     left join civicrm_value_hubspot_migra_41 mo on mo.entity_id = c.relationships_team_contact_180
                     left join civicrm_value_hubspot_migra_41 mb on mb.entity_id = c.staff_contact_61

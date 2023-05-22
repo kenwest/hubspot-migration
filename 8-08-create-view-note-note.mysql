@@ -1,2 +1,0 @@
-drop view if exists
-    cbf_migrate_note_note

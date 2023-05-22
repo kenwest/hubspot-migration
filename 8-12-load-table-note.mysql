@@ -90,3 +90,36 @@ cbf_migrate_note (
         and note.entity_table               =       'civicrm_contact'
         and staff.contact_sub_type          like    '%Staff%'
         and owner.is_primary                =       1
+
+    union
+
+    select
+        /* Export control */
+        contact.id,
+        contact.display_name,
+        'Tags',
+        now(),
+        now(),
+        m.marketing_contact_188,
+        m.included_in_sample_migration_184,
+        rand(),
+        /* Data fields */
+        unix_timestamp(),
+        null,
+        concat_ws(' ',
+            'At the time of migration,',
+            contact.first_name,
+            'had the following CiviCRM tags:',
+            group_concat(t.name separator ', '))
+    from
+                    civicrm_value_hubspot_migra_41  m
+        join        civicrm_contact                 contact on  contact.id = m.entity_id
+        join        civicrm_entity_tag              ct      on  ct.entity_id = contact.id and ct.entity_table = 'civicrm_contact'
+        join        civicrm_tag                     t       on  t.id = ct.tag_id
+    where
+            m.included_in_migration_183     =       1
+        and t.is_tagset                     =       0
+        and t.is_selectable                 =       1
+        and t.name                          !=      'Unconfirmed'
+    group by
+        ct.entity_id

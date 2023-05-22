@@ -2,16 +2,15 @@ update
     civicrm_value_hubspot_migra_41  m,
     (
         select
-            c.id, max(g.region_hint_206)
+            gc.contact_id, max(g.region_hint_206)
         from
-                    civicrm_contact                 c
-            join    civicrm_group_contact           gc  on  gc.contact_id = c.id
+                    civicrm_group_contact           gc
             join    civicrm_value_hubspot_migra_43  g   on  g.entity_id = gc.group_id
         where
                 gc.status                   =       'Added'
             and g.hubspot_name_203          is not  null
         group by
-            c.id
+            gc.contact_id
     ) as r(id, region)
 set
     m.region_209                    =   r.region

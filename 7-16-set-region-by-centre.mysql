@@ -2,16 +2,15 @@ update
     civicrm_value_hubspot_migra_41  m,
     (
         select
-            c.id, max(t.description)
+            ct.entity_id, max(t.description)
         from
-                    civicrm_contact     c
-            join    civicrm_entity_tag  ct  on  ct.entity_id = c.id
+                    civicrm_entity_tag  ct
             join    civicrm_tag         t   on  t.id = ct.tag_id
         where
                 ct.entity_table =   'civicrm_contact'
             and t.parent_id     =   23  /* Centre */
         group by
-            c.id
+            ct.entity_id
     ) as r(id, region)
 set
     m.region_209                    =   r.region

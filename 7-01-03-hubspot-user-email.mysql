@@ -6,19 +6,19 @@
 update
     civicrm_value_hubspot_migra_42  e,
     (
-        select      d.id,
-                    d.entity_value_195
-        from        civicrm_value_hubspot_migra_42 d
-                    join civicrm_value_hubspot_migra_41 m on m.entity_id = d.entity_id
-        where       d.entity_type_200 = 'other_email'
-                    and m.hubspot_user_email_213 = d.entity_value_195
+        select      m.entity_id,
+                    m.hubspot_user_email_213
+        from        civicrm_value_hubspot_migra_41 m
+        where       m.is_hubspot_user_207 = 1
                     and not exists (
                         select *
                         from civicrm_value_hubspot_migra_42
-                        where entity_value_195 = d.entity_value_195 and entity_type_200 = 'email')
-        group by    d.id, d.entity_value_195
-    ) as a(id, email)
+                        where entity_id = m.entity_id and entity_type_200 = 'email')
+        group by    m.entity_id
+    ) as hsu(id, email)
 set
     e.entity_type_200       =   'email'
 where
-        e.id                =   a.id
+        e.entity_id         =   hsu.id
+    and e.entity_type_200   =   'other_email'
+    and e.entity_value_195  =   hsu.email

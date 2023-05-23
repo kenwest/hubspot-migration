@@ -8,14 +8,16 @@ update
     (
         select      min(if(d2.id is null, d.id, null)),
                     d.entity_value_195,
-                    sum(if(d2.id is null, 1, 0)) as counter
+                    count(d.id) as sharing_email_counter,
+                    sum(if(d2.id is null, 1, 0)) as no_email_counter
         from        civicrm_value_hubspot_migra_42 d
                     left join civicrm_value_hubspot_migra_42 d2 on d2.entity_id = d.entity_id and d2.entity_type_200 = 'email'
         where       d.entity_type_200 = 'other_email'
         group by    d.entity_value_195
-        having      counter=1
+        having      sharing_email_counter > 1
+                    and no_email_counter = 1
     )
-        as a(id, email, counter)
+        as a(id, email, sharing_email_counter, no_email_counter)
 set
     e.entity_type_200       =   'email'
 where

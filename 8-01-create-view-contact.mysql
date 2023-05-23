@@ -107,12 +107,12 @@ as
                 from (
                     select      entity_id, entity_value_195, entity_weight_196
                     from        civicrm_value_hubspot_migra_42
-                    where       entity_type_200 = 'phone'
+                    where       entity_type_200 in ('non-mobile', 'mobile')
                 ) as d(contact, item, weight)
                 join (
                     select      entity_id, max(entity_weight_196)
                     from        civicrm_value_hubspot_migra_42
-                    where       entity_type_200 = 'phone'
+                    where       entity_type_200 in ('non-mobile', 'mobile')
                     group by    entity_id
                 ) as maximum(contact, weight) on d.contact = maximum.contact
                 where d.weight = maximum.weight
@@ -124,7 +124,7 @@ as
                                 from (
                                     select      entity_id, entity_id_194, entity_value_195, entity_weight_196
                                     from        civicrm_value_hubspot_migra_42
-                                    where       entity_type_200 in ('mobile', 'phone')
+                                    where       entity_type_200 in ('non-mobile', 'mobile')
                                 ) as d(contact, item_id, item_value, weight)
                                 join (
                                     select      entity_id, max(entity_weight_196)
@@ -135,7 +135,7 @@ as
                                 join (
                                     select      entity_id, max(entity_weight_196)
                                     from        civicrm_value_hubspot_migra_42
-                                    where       entity_type_200 = 'phone'
+                                    where       entity_type_200 in ('non-mobile', 'mobile')
                                     group by    entity_id
                                 ) as max_phone(contact, weight) on max_phone.contact = d.contact
                                 where

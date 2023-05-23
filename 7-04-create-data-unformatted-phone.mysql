@@ -12,7 +12,7 @@ civicrm_value_hubspot_migra_42 (entity_id, entity_type_200, entity_id_194, entit
 select * from (
     select
         phone.contact,
-        'phone',
+        'non-mobile',
         max(phone.id),
         phone.value,
         if(max(phone.is_primary), 1000000, 0) + max(phone.id),

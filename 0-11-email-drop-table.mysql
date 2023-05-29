@@ -1,1 +1,1 @@
-drop table cbf_migrate_email
+drop table if exists cbf_migrate_email

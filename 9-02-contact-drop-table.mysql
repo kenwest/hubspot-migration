@@ -1,1 +1,1 @@
-drop table cbf_migration_contact
+drop table if exists cbf_migration_contact

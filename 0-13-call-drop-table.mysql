@@ -1,1 +1,1 @@
-drop table cbf_migrate_call
+drop table if exists cbf_migrate_call

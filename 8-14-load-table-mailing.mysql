@@ -1,10 +1,15 @@
-create or replace view
-    cbf_migrate_mailing_content
-as
+insert into
+cbf_migrate_mailing_content (
+    civicrm_mailing_id,
+    email_subject,
+    email_html,
+    recipients
+)
     select
         mailing.id          as  civicrm_mailing_id,
         mailing.subject     as  email_subject,
-        mailing.body_html   as  email_html
+        mailing.body_html   as  email_html,
+        count(*)            as  recipients
     from
                 cbf_migrate_email   email
         join    civicrm_mailing     mailing on  mailing.id = email.civicrm_mailing_id

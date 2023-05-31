@@ -18,7 +18,7 @@ civicrm_value_hubspot_migra_42 (entity_id, entity_type_200, entity_id_194, entit
 select * from (
     select
         e.contact_id,
-        'other_email',
+        if(e.location_type_id = 8, 'preallocated_email', 'other_email'),
         max(e.id),
         e.email,
             if(max(e.on_hold * (e.is_primary + e.is_bulkmail)), 0, 100000000) +

@@ -1,0 +1,20 @@
+SELECT 'No primary but have additional' as 'Contacts having emails', count(*) as 'Count' FROM cbf_civicrm_5283.cbf_migrate_contact
+where primary_email is null and additional_emails is not null
+union
+SELECT 'No primary but have secondary', count(*) FROM cbf_civicrm_5283.cbf_migrate_contact
+where primary_email is null and secondary_emails is not null
+union
+SELECT 'Only primary', count(*) FROM cbf_civicrm_5283.cbf_migrate_contact
+where primary_email is not null and secondary_emails is null and additional_emails is null
+union
+SELECT 'Only primary but have additional', count(*) FROM cbf_civicrm_5283.cbf_migrate_contact
+where primary_email is not null and secondary_emails is null and additional_emails is not null
+union
+SELECT 'Multiple emails', count(*) FROM cbf_civicrm_5283.cbf_migrate_contact
+where primary_email is not null and secondary_emails is not null and additional_emails is null
+union
+SELECT 'Multiple emails but have additional', count(*) FROM cbf_civicrm_5283.cbf_migrate_contact
+where primary_email is not null and secondary_emails is not null and additional_emails is not null
+union
+SELECT 'Total', count(*) FROM cbf_civicrm_5283.cbf_migrate_contact
+where primary_email is not null or secondary_emails is not null or additional_emails is not null

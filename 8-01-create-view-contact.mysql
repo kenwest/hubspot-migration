@@ -189,7 +189,7 @@ as
                 select      d.entity_id, group_concat(concat_ws(' ', d.entity_value_195, loc.suffix) separator ', ')
                 from        civicrm_value_hubspot_migra_42 d
                             join civicrm_email e on e.id = d.entity_id_194
-                            left join (values row(1, '(Home)'), row(2, '(Work)')) as loc(id, suffix) on loc.id = e.location_type_id
+                            left join (values row(1, '(Home)'), row(2, '(Work)'), row(8, '(allocated to someone else)')) as loc(id, suffix) on loc.id = e.location_type_id
                 where       d.entity_type_200 in ('preallocated_email', 'other_email')
                 group by    d.entity_id
                 order by    d.entity_id, d.entity_weight_196 desc

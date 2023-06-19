@@ -1,6 +1,6 @@
 /*
- *   If a number of Contacts share an 'other_email' Contact Email, and only one of them is a
- *   Marketing Contact, then the remaining one can have its Contact Email made an 'email'
+ *   If a number of Contacts share an 'unallocated_email' Contact Email, and only one of them
+ *   is a Marketing Contact, then the remaining one can have its Contact Email made an 'email'
  *   provided no other Contact has this Email as an 'email' Email Contact
  *   
  */
@@ -12,7 +12,7 @@ update
                     count(distinct d.entity_id) as counter
         from        civicrm_value_hubspot_migra_42 d
                     join civicrm_value_hubspot_migra_41 m on m.entity_id = d.entity_id
-        where       d.entity_type_200 = 'other_email'
+        where       d.entity_type_200 = 'unallocated_email'
                     and m.marketing_contact_188 = 1
                     and not exists (
                         select *

@@ -1,5 +1,5 @@
 /*
- *   If a number of Contacts share an 'other_email' Contact Email, and all of them except one have an
+ *   If a number of Contacts share an 'unallocated_email' Contact Email, and all of them except one have an
  *   'email' Contact Email, then the remaining one can have its Contact Email made an 'email'
  *   
  */
@@ -12,7 +12,7 @@ update
                     sum(if(d2.id is null, 1, 0)) as no_email_counter
         from        civicrm_value_hubspot_migra_42 d
                     left join civicrm_value_hubspot_migra_42 d2 on d2.entity_id = d.entity_id and d2.entity_type_200 = 'email'
-        where       d.entity_type_200 = 'other_email'
+        where       d.entity_type_200 = 'unallocated_email'
         group by    d.entity_value_195
         having      sharing_email_counter > 1
                     and no_email_counter = 1

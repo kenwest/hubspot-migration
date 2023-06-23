@@ -17,6 +17,7 @@ as
         c.total_amount                          as  amount,
         'AUD'                                   as  currency,
         unix_timestamp(c.receive_date)          as  create_date,
+        date(c.receive_date)                    as  create_date_only,
         c.source                                as  deal_description,
         concat_ws(' ',
             ft.name,

@@ -55,3 +55,5 @@ as
                 r.is_active                     =   1
             and ifnull(r.end_date, now())       >=  now()
             )
+        and ma.included_in_migration_183        =   1
+        and mb.included_in_migration_183        =   1

@@ -3,7 +3,7 @@ create or replace view
 as
     select
         /* Export control */
-        contact.id                          as  civicrm_contact_id,
+        contact.contact_id                  as  civicrm_contact_id,
         now()                               as  time_of_migration,
         contact.modified                    as  contact_last_modified_at,
         m.included_in_sample_migration_184  as  is_in_sample,
@@ -25,6 +25,7 @@ as
         join    (
                     select
                         c.id,
+                        c.id,
                         c.modified_date,
                         c.display_name,
                         null,
@@ -37,6 +38,7 @@ as
                     union
 
                     select
+                        grp.id,
                         c.id,
                         c.modified_date,
                         c.display_name,
@@ -53,9 +55,9 @@ as
                         and ifnull(r.end_date, now())   >=  now()
                         and rt.label_a_b                in  ('Team Member of')
 
-                ) as    contact(id, modified, name, group_name, association)
-                                                        on  contact.id = gc.contact_id
-        join    civicrm_value_hubspot_migra_41  m       on  m.entity_id = contact.id
+                ) as    contact(matching_id, contact_id, modified, name, group_name, association)
+                                                        on  contact.matching_id = gc.contact_id
+        join    civicrm_value_hubspot_migra_41  m       on  m.entity_id = contact.contact_id
     where
             network.is_network_201      =   1
         and gc.status                   =   'Added'

@@ -9,7 +9,7 @@ as
         m.included_in_sample_migration_184  as  is_in_sample,
         contact.name                        as  contact_name,
         if(contact.group_name is null,
-            ascii(network.network_name_202) + length(network.network_name_202),      /* @TODO remove temp code */
+            network.network_weight_214,         /* @TODO this weight makes no account of the contact's behaviour */
             0
         )                                   as  weight,
         /* Data fields */

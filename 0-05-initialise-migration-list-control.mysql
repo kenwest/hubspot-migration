@@ -3,6 +3,7 @@ update
 set
     is_network_201      = null,
     network_name_202    = null,
+    network_weight_214  = null,
     hubspot_name_203    = null,
     network_hint_204    = null,
     christian_hint_205  = null,

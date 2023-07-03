@@ -1,8 +1,8 @@
 SELECT 'No primary but have additional email that could be allocated to someone' as 'Contacts having emails', count(*) as 'Count' FROM cbf_civicrm_5283.cbf_migrate_contact
-where primary_email is null and additional_emails is not null and additional_emails not like 'allocated'
+where primary_email is null and additional_emails is not null and additional_emails not like '%allocated%'
 union
 SELECT 'No primary but additional email allocated to someone else', count(*) FROM cbf_civicrm_5283.cbf_migrate_contact
-where primary_email is null and additional_emails like 'allocated'
+where primary_email is null and additional_emails like '%allocated%'
 union
 SELECT 'No primary but have secondary', count(*) FROM cbf_civicrm_5283.cbf_migrate_contact
 where primary_email is null and secondary_emails is not null
